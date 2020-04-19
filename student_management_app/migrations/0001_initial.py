@@ -108,9 +108,4 @@ class Migration(migrations.Migration):
                 ('admin', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
-        migrations.AddField(
-            model_name='class',
-            name='director_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='student_management_app.Director'),
-        ),
     ]

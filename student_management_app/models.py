@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -58,3 +60,23 @@ class Student(models.Model):
     subject = models.ManyToManyField(Subject)
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     objects = models.Manager()
+
+
+@receiver(post_save,sender=CustomUser)
+def create_user_profile(sender,instance,created,**kwargs):
+    if created:
+        if instance.user_type==1:
+            Root.objects.create(admin=instance)
+        if instance.user_type==2:
+            Director.objects.create(admin=instance)
+        if instance.user_type==3:
+            Student.objects.create(admin=instance)
+
+@receiver(post_save,sender=CustomUser)
+def save_user_profile(sender,instance,**kwargs):
+    if instance.user_type==1:
+        instance.root.save()
+    if instance.user_type==2:
+        instance.director.save()
+    if instance.user_type==3:
+        instance.student.save()

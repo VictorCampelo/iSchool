@@ -21,5 +21,7 @@ from school_project import settings
 
 urlpatterns = [
     path('demo', views.showDemoPage),
+    path('', views.showLoginPage),
+    path('doLogin', views.doLogin),
     path('admin/', admin.site.urls),
 ]+static(settings.STATIC_URL, documents_root=settings.STATIC_ROOT)

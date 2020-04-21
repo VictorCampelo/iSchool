@@ -23,7 +23,7 @@ def doLogin(request):
         if user!=None:
             login(request,user)
             if user.user_type=="1":
-                return HttpResponse("EMAIL:"+request.POST.get("email")+" pass: "+request.POST.get("password"))
+                return HttpResponseRedirect(reverse("admin_home"))
             elif user.user_type=="2":
                 return HttpResponseRedirect(reverse("director_home"))
             else:

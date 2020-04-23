@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
-from student_management_app import views, adminHome
+from student_management_app import views, admin
 from school_project import settings
 
 urlpatterns = [
@@ -25,6 +25,7 @@ urlpatterns = [
     path('doLogin',views.doLogin),
     path('get_user_details', views.GetUserDetails),
     path('logout_user', views.logout_user,name="logout"),
-    path('admin_home',adminHome.admin_home,name="admin_home"),
-    path('admin/', admin.site.urls),
+    path('admin_home',admin.admin_home,name="admin_home"),
+    path('add_admin',admin.add_admin,name="add_admin"),
+    path('save_admin',admin.save_admin,name="save_admin"),
 ]+static(settings.STATIC_URL, documents_root=settings.STATIC_ROOT)

@@ -30,8 +30,11 @@ urlpatterns = [
     path('add_director',admin.add_director,name="add_director"),
     path('add_student',admin.add_student,name="add_student"),
     path('add_teacher',admin.add_teacher,name="add_teacher"),
+    path('add_school',admin.add_school,name="add_school"),
+
     path('save_admin',admin.save_admin,name="save_admin"),
     path('save_director',admin.save_director,name="save_director"),
     path('save_teacher',admin.save_teacher,name="save_teacher"),
     path('save_student',admin.save_student,name="save_student"),
+    path('save_school',admin.save_school,name="save_school"),
 ]+static(settings.STATIC_URL, documents_root=settings.STATIC_ROOT)

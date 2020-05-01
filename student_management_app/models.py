@@ -15,13 +15,6 @@ class Root(models.Model):
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     objects = models.Manager()
 
-class Director(models.Model):
-    id = models.AutoField(primary_key=True)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now_add=True)
-    admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    objects = models.Manager()
-
 class School(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -29,13 +22,21 @@ class School(models.Model):
     update_time = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
 
+class Director(models.Model):
+    id = models.AutoField(primary_key=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now_add=True)
+    admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    school = models.OneToOneField(School, on_delete=models.CASCADE)
+    objects = models.Manager()
+
 class SchoolClass(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
-    school_id = models.ForeignKey(School, on_delete=models.CASCADE)
-    director_id = models.ForeignKey(Director, on_delete=models.DO_NOTHING)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    director = models.ForeignKey(Director, on_delete=models.DO_NOTHING)
     objects = models.Manager()
 
 class Teacher(models.Model):
@@ -50,8 +51,8 @@ class Subject(models.Model):
     name = models.CharField(max_length=255)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
-    class_id = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
-    teacher_id = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    schoolclass = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
     objects = models.Manager()
 
 class Student(models.Model):
@@ -69,7 +70,7 @@ def create_user_profile(sender,instance,created,**kwargs):
         if instance.user_type==1:
             Root.objects.create(admin=instance)
         if instance.user_type==2:
-            Director.objects.create(admin=instance)
+            Director.objects.create(admin=instance, school=School.objects.get(id=1))
         if instance.user_type==3:
             Teacher.objects.create(admin=instance)
         if instance.user_type==4:

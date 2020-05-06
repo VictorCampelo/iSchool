@@ -7,7 +7,7 @@
             <img src="{% static "dist/img/user2-160x160.jpg" %}" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="#" class="d-block">Alexander Pierce</a>
+            <a href="#" class="d-block">{{ user.get_username }}</a>
           </div>
         </div>
   
@@ -44,6 +44,15 @@
               </a>
             </li>
             <li class="nav-item">
+              <a href="/add_class" class="nav-link">
+                <i class="nav-icon fa fa-user-plus"></i>
+                <p>
+                  Add Class
+                  <!-- <span class="right badge badge-danger">New</span> -->
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="/add_student" class="nav-link">
                 <i class="nav-icon fa fa-user-plus"></i>
                 <p>
@@ -66,6 +75,24 @@
                 <i class="nav-icon fa fa-cogs"></i>
                 <p>
                   Manage Admin
+                  <!-- <span class="right badge badge-danger">New</span> -->
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/manage_school" class="nav-link">
+                <i class="nav-icon fa fa-cogs"></i>
+                <p>
+                  Manage School
+                  <!-- <span class="right badge badge-danger">New</span> -->
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/manage_class" class="nav-link">
+                <i class="nav-icon fa fa-cogs"></i>
+                <p>
+                  Manage Class
                   <!-- <span class="right badge badge-danger">New</span> -->
                 </p>
               </a>

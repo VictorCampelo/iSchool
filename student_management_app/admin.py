@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.admin import UserAdmin
-from student_management_app.models import CustomUser, School, Director
+from student_management_app.models import CustomUser, School, Director, Subject, SchoolClass
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from student_management_app.forms import AddDirectorForm
+from student_management_app.forms import AddDirectorForm, AddClassForm, AddSchoolForm
 
 # Register your models here.
 class UserModel(UserAdmin):
@@ -23,7 +23,11 @@ def add_student(request):
 def add_teacher(request):
     return render(request, "admin_template/add_teacher.html")
 def add_school(request):
-    return render(request, "admin_template/add_school.html")
+    form=AddSchoolForm()
+    return render(request, "admin_template/add_school.html", {"form":form})
+def add_class(request):
+    form=AddClassForm()
+    return render(request, "admin_template/add_class.html", {"form":form})
 
 def save_admin(request):
     if request.method!="POST":
@@ -47,15 +51,34 @@ def save_school(request):
     if request.method!="POST":
         return HttpResponse("Method Not Allowed")
     else:
-        name=request.POST.get("name")
-        try:
-            school=School(name=name)
-            school.save()
-            messages.success(request,"Successfully Added School")
-            return HttpResponseRedirect(reverse("add_school"))
-        except:
-            messages.error(request,"Failed to Add School")
-            return HttpResponseRedirect(reverse("add_school"))
+        form=AddSchoolForm(request.POST,request.FILES)
+        if form.is_valid():
+            name=form.cleaned_data["name"]
+            level=form.cleaned_data["level"]
+            try:
+                school=School(name=name, level=level)
+                school.save()
+                if level == '1':
+                    for i in range(1,4):
+                        for j in range(1,4):
+                            classes=SchoolClass(name=str(i)+"º Ano", serie=i, shift=j, school=school)
+                            classes.save()
+                elif level == '2':
+                     for i in range(5,9):
+                        for j in range(1,4):
+                            classes=SchoolClass(name=str(i)+"ª Série Fundamental", serie=i, shift=j, school=school)
+                            classes.save()
+                else:
+                    for i in range(1,5):
+                        for j in range(1,4):
+                            classes=SchoolClass(name=str(i)+"ª Série Básico", serie=i, shift=j, school=school)
+                            classes.save()
+
+                messages.success(request,"Successfully Added School")
+                return HttpResponseRedirect(reverse("add_school"))
+            except:
+                messages.error(request,"Failed to Add School")
+                return HttpResponseRedirect(reverse("add_school"))
 
 def save_director(request):
     if request.method!="POST":
@@ -79,6 +102,31 @@ def save_director(request):
             except:
                 messages.error(request,"Failed to Add Director")
                 return HttpResponseRedirect(reverse("add_director"))
+
+def save_class(request):
+    if request.method!="POST":
+        return HttpResponse("Method Not Allowed")
+    else:
+        form=AddDirectorForm(request.POST,request.FILES)
+        if form.is_valid():
+            school_id=form.cleaned_data["school"]
+            serie=form.cleaned_data["serie"]
+            shift=form.cleaned_data["shift"]
+            try:
+                school = School.objects.get(id=school_id)
+
+                if school.level == '1':
+                    name = str(serie)+"º Ano"
+                else:
+                    name = str(serie)+"ª Série"
+
+                schoolClass=SchoolClass(name=name,school=school_id, serie=serie, shift=shift)
+                schoolClass.save()
+                messages.success(request,"Successfully Added Class")
+                return HttpResponseRedirect(reverse("add_class"))
+            except:
+                messages.error(request,"Failed to Add Class")
+                return HttpResponseRedirect(reverse("add_class"))
         
 def save_student(request):
     if request.method!="POST":

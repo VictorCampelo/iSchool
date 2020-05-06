@@ -18,6 +18,7 @@ class Root(models.Model):
 class School(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    level = models.IntegerField()
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
@@ -33,10 +34,11 @@ class Director(models.Model):
 class SchoolClass(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    serie = models.IntegerField()
+    shift = models.IntegerField()
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
     school = models.ForeignKey(School, on_delete=models.CASCADE)
-    director = models.ForeignKey(Director, on_delete=models.DO_NOTHING)
     objects = models.Manager()
 
 class Teacher(models.Model):
@@ -57,6 +59,11 @@ class Subject(models.Model):
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
+    gender=models.CharField(max_length=255)
+    address=models.TextField()
+    profile_pic=models.FileField()
+    session_start_year=models.DateField()
+    session_end_year=models.DateField()
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
     subject = models.ManyToManyField(Subject)

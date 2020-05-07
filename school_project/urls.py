@@ -40,5 +40,7 @@ urlpatterns = [
     path('save_student',admin.save_student,name="save_student"),
     path('save_school',admin.save_school,name="save_school"),
     path('save_class',admin.save_class,name="save_class"),
-    
+
+    path('class_list/', admin.load_class, name='ajax_load_class'),
+
 ]+static(settings.STATIC_URL, documents_root=settings.STATIC_ROOT)

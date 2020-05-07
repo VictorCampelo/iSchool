@@ -5,7 +5,7 @@ from student_management_app.models import CustomUser, School, Director, Subject,
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from student_management_app.forms import AddDirectorForm, AddClassForm, AddSchoolForm
+from student_management_app.forms import AddDirectorForm, AddClassForm, AddSchoolForm, SchoolForm
 
 # Register your models here.
 class UserModel(UserAdmin):
@@ -19,7 +19,17 @@ def add_director(request):
     form=AddDirectorForm()
     return render(request, "admin_template/add_director.html", {"form":form})
 def add_student(request):
-    return render(request, "admin_template/add_student.html")
+    context = {}
+    school = request.GET.get('school')
+    print(school)
+    context['form'] = SchoolForm(school)
+    return render(request, 'admin_template/add_student.html', context)
+
+def load_class(request):
+    school = request.GET.get('school')
+    classes = SchoolClass.objects.filter(school=school)
+    return render(request, 'admin_template/class_list.html', {'class': classes})
+
 def add_teacher(request):
     return render(request, "admin_template/add_teacher.html")
 def add_school(request):

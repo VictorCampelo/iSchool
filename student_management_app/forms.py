@@ -1,6 +1,6 @@
 from django import forms
 
-from student_management_app.models import School
+from student_management_app.models import School, SchoolClass
 
 class DateInput(forms.DateInput):
     input_type = "date"
@@ -53,3 +53,38 @@ class AddClassForm(forms.Form):
 class AddSchoolForm(forms.Form):
     name=forms.CharField(label="Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
     level=forms.ChoiceField(label="Level",choices=[(1, 'Médio'), (2, 'Fundamental')],widget=forms.Select(attrs={"class":"form-control"}))
+
+class SchoolForm(forms.Form):
+    
+    email=forms.EmailField(label="Email",max_length=50,widget=forms.EmailInput(attrs={"class":"form-control"}))
+    password=forms.CharField(label="Password",max_length=50,widget=forms.PasswordInput(attrs={"class":"form-control"}))
+    first_name=forms.CharField(label="First Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    last_name=forms.CharField(label="Last Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    username=forms.CharField(label="Username",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    
+    school=School.objects.all()
+    school_list=[]
+    for schools in school:
+        small_school=(schools.id,schools.name)
+        school_list.append(small_school)
+
+    school=forms.ChoiceField(label="School",choices=school_list,widget=forms.Select(attrs={"class":"form-control"}))
+    
+    classes = forms.ChoiceField(
+        label="Class",
+        choices=SchoolClass.objects.none(),
+        required=False,
+        widget=forms.Select(attrs={"class":"form-control"})
+    )
+
+    class Meta:
+        fields = ('school', 'classes')
+
+    def __init__(self, school=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sclass=SchoolClass.objects.filter(school=school)
+        sclass_list=[]
+        for sclasses in sclass:
+            small_school=(sclasses.id,sclasses.name)
+            sclass_list.append(small_school)
+        self.fields['classes'].choices = sclass_list

@@ -1,0 +1,12 @@
+<option value="">---------</option>
+{% for c in class %}
+<option value="{{ c.id }}">{{ c.name }} -
+    {% if c.shift == 1 %}
+    Manhã
+    {% elif c.shift == 2 %}
+    Tarde
+    {% else %}
+    Noite
+    {% endif %}
+</option>
+{% endfor %}

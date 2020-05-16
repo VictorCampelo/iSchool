@@ -42,10 +42,10 @@
     var url = $("#personForm").attr("data-class-url");  // get the url of the `load_cities` view
     var school = $(this).val();  // get the selected country ID from the HTML input
 
-    $.ajax({                       // initialize an AJAX request
-      url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+    $.ajax({                     
+      url: url,                   
       data: {
-        'school': school       // add the country id to the GET parameters
+        'school': school       // add the school id to the GET parameters
       },
       success: function (data) {   // `data` is the return of the `load_cities` view function
         $("#id_classes").html(data);  // replace the contents of the city input with the data that came from the server

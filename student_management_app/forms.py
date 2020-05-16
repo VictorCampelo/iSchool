@@ -73,7 +73,6 @@ class SchoolForm(forms.Form):
     classes = forms.ChoiceField(
         label="Class",
         choices=SchoolClass.objects.none(),
-        required=False,
         widget=forms.Select(attrs={"class":"form-control"})
     )
 
@@ -82,9 +81,10 @@ class SchoolForm(forms.Form):
 
     def __init__(self, school=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        sclass=SchoolClass.objects.filter(school=school)
         sclass_list=[]
-        for sclasses in sclass:
-            small_school=(sclasses.id,sclasses.name)
-            sclass_list.append(small_school)
+        if school:
+            sclass=SchoolClass.objects.filter(school=school)
+            for sclasses in sclass:
+                small_school=(sclasses.id,sclasses.name)
+                sclass_list.append(small_school)
         self.fields['classes'].choices = sclass_list

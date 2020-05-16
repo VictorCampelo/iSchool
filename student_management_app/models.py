@@ -66,7 +66,7 @@ class Student(models.Model):
     session_end_year=models.DateField()
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
-    subject = models.ManyToManyField(Subject)
+    schoolclass = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     objects = models.Manager()
 
@@ -81,7 +81,10 @@ def create_user_profile(sender,instance,created,**kwargs):
         if instance.user_type==3:
             Teacher.objects.create(admin=instance)
         if instance.user_type==4:
-            Student.objects.create(admin=instance)
+            Student.objects.create(admin=instance, 
+            schoolclass=SchoolClass.objects.get(id=1),
+            session_start_year="2020-01-01",
+            session_end_year="2021-01-01")
 
 @receiver(post_save,sender=CustomUser)
 def save_user_profile(sender,instance,**kwargs):

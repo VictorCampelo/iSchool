@@ -6,22 +6,24 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from student_management_app.forms import AddDirectorForm, AddClassForm, AddSchoolForm, SchoolForm
-
-# Register your models here.
+import traceback
+# Register models here.
 class UserModel(UserAdmin):
     pass
 
 def admin_home(request):
     return render(request, "admin_template/admin_home.html")
+
 def add_admin(request):
     return render(request, "admin_template/add_admin.html")
+
 def add_director(request):
     form=AddDirectorForm()
     return render(request, "admin_template/add_director.html", {"form":form})
+
 def add_student(request):
     context = {}
     school = request.GET.get('school')
-    print(school)
     context['form'] = SchoolForm(school)
     return render(request, 'admin_template/add_student.html', context)
 
@@ -32,9 +34,11 @@ def load_class(request):
 
 def add_teacher(request):
     return render(request, "admin_template/add_teacher.html")
+
 def add_school(request):
     form=AddSchoolForm()
     return render(request, "admin_template/add_school.html", {"form":form})
+
 def add_class(request):
     form=AddClassForm()
     return render(request, "admin_template/add_class.html", {"form":form})
@@ -147,12 +151,24 @@ def save_student(request):
         username=request.POST.get("username")
         email=request.POST.get("email")
         password=request.POST.get("password")
+        class_id=request.POST.get("classes")
         try:
-            user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=4, is_superuser=0)
+            print(request.POST)
+            user = CustomUser.objects.create_user(username=username,
+                password=password,
+                email=email,
+                last_name=last_name,
+                first_name=first_name,
+                user_type=4, 
+                is_superuser=0)
+            print(user)
+            schoolobj=SchoolClass.objects.get(id=class_id)
+            user.student.schoolclass=schoolobj
             user.save()
             messages.success(request,"Successfully Added Student")
             return HttpResponseRedirect(reverse("add_student"))
-        except:
+        except Exception: 
+            traceback.print_exc()
             messages.error(request,"Failed to Add Student")
             return HttpResponseRedirect(reverse("add_student"))
 

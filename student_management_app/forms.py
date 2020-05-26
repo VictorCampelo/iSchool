@@ -1,6 +1,6 @@
 from django import forms
 
-from student_management_app.models import School, SchoolClass
+from student_management_app.models import School, SchoolClass, Teacher
 
 class DateInput(forms.DateInput):
     input_type = "date"
@@ -88,3 +88,46 @@ class SchoolForm(forms.Form):
                 small_school=(sclasses.id,sclasses.name)
                 sclass_list.append(small_school)
         self.fields['classes'].choices = sclass_list
+
+class AddSubjectForm(forms.Form):
+    name=forms.CharField(label="Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    
+    school=School.objects.all()
+    school_list=[]
+    for schools in school:
+        small_school=(schools.id,schools.name)
+        school_list.append(small_school)
+
+    school=forms.ChoiceField(label="School",choices=school_list,widget=forms.Select(attrs={"class":"form-control"}))
+    
+    classes = forms.ChoiceField(
+        label="Class",
+        choices=SchoolClass.objects.none(),
+        widget=forms.Select(attrs={"class":"form-control"})
+    )
+
+    teachers = forms.ChoiceField(
+        label="Teacher",
+        choices=Teacher.objects.none(),
+        widget=forms.Select(attrs={"class":"form-control"})
+    )
+
+    class Meta:
+        fields = ('school', 'classes', 'teachers')
+
+    def __init__(self, school=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sclass_list=[]
+        steacher_list=[]
+        if school:
+            sclass=SchoolClass.objects.filter(school=school)
+            for sclasses in sclass:
+                small_school=(sclasses.id,sclasses.name)
+                sclass_list.append(small_school)
+            
+            steacher = Teacher.objects.filter(school=school)
+            for teacher in steacher:
+                small_teacher=(teacher.id,teacher.name)
+                steacher_list.append(small_teacher)
+        self.fields['classes'].choices = sclass_list
+        self.fields['teachers'].choices = steacher_list

@@ -5,7 +5,7 @@ from student_management_app.models import CustomUser, School, Director, Subject,
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from student_management_app.forms import AddDirectorForm, AddClassForm, AddSchoolForm, SchoolForm
+from student_management_app.forms import *
 import traceback
 # Register models here.
 class UserModel(UserAdmin):
@@ -32,8 +32,14 @@ def load_class(request):
     classes = SchoolClass.objects.filter(school=school)
     return render(request, 'admin_template/class_list.html', {'class': classes})
 
+def load_teacher(request):
+    school = request.GET.get('school')
+    teachers = Teacher.objects.filter(school=school)
+    return render(request, 'admin_template/teacher_list.html', {'teacher': teachers})
+
 def add_teacher(request):
-    return render(request, "admin_template/add_teacher.html")
+    form=AddDirectorForm()
+    return render(request, "admin_template/add_teacher.html", {"form":form})
 
 def add_school(request):
     form=AddSchoolForm()
@@ -42,6 +48,12 @@ def add_school(request):
 def add_class(request):
     form=AddClassForm()
     return render(request, "admin_template/add_class.html", {"form":form})
+
+def add_subject(request):
+    context = {}
+    school = request.GET.get('school')
+    context['form'] = AddSubjectForm(school)
+    return render(request, 'admin_template/add_subject.html', context)
 
 def save_admin(request):
     if request.method!="POST":
@@ -172,22 +184,48 @@ def save_student(request):
             messages.error(request,"Failed to Add Student")
             return HttpResponseRedirect(reverse("add_student"))
 
+def save_subject(request):
+    if request.method!="POST":
+        return HttpResponse("Method Not Allowed")
+    else:
+        name=request.POST.get("name")
+        class_id=request.POST.get("classes")
+        teacher_id=request.POST.get("teachers")
+
+        try:
+            schoolObj=SchoolClass.objects.get(id=class_id)
+            teacherObj=Teacher.objects.get(id=teacher_id)
+
+            subject=Subject(name=name,schoolclass=schoolObj, teacher=teacherObj)
+            subject.save()
+            messages.success(request,"Successfully Added Subject")
+            return HttpResponseRedirect(reverse("add_subject"))
+        except Exception: 
+            traceback.print_exc()
+            messages.error(request,"Failed to Add Subject")
+            return HttpResponseRedirect(reverse("add_subject"))
+
 def save_teacher(request):
     if request.method!="POST":
         return HttpResponse("Method Not Allowed")
     else:
-        first_name=request.POST.get("first_name")
-        last_name=request.POST.get("last_name")
-        username=request.POST.get("username")
-        email=request.POST.get("email")
-        password=request.POST.get("password")
-        try:
-            user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=3, is_superuser=0)
-            user.save()
-            messages.success(request,"Successfully Added Teacher")
-            return HttpResponseRedirect(reverse("add_teacher"))
-        except:
-            messages.error(request,"Failed to Add Teacher")
-            return HttpResponseRedirect(reverse("add_teacher"))
+        form=AddDirectorForm(request.POST,request.FILES)
+        if form.is_valid():
+            first_name=form.cleaned_data["first_name"]
+            last_name=form.cleaned_data["last_name"]
+            username=form.cleaned_data["username"]
+            email=form.cleaned_data["email"]
+            password=form.cleaned_data["password"]
+            school_id=form.cleaned_data["school"]
+            try:
+                user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=3)
+                schoolobj=School.objects.get(id=school_id)
+                user.teacher.school=schoolobj
+                user.save()
+                messages.success(request,"Successfully Added Teacher")
+                return HttpResponseRedirect(reverse("add_teacher"))
+            except:
+                messages.error(request,"Failed to Add Teacher")
+                return HttpResponseRedirect(reverse("add_teacher"))
 
 admin.site.register(CustomUser, UserModel)

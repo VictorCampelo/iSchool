@@ -9,32 +9,9 @@
       </div>
       <!-- /.card-header -->
       <!-- form start -->
-      <form role="form" action="/save_school" method="POST">
-        {% csrf_token %}
-        <div class="card-body">
-          <div class="form-group">
-            <label for="exampleInputEmail1">Name</label>
-            <input type="text" class="form-control" placeholder="Enter..." name="name">
-          </div>
-
-          <div class="form-group">
-            {% if messages %}
-            {% for message in messages %}
-            {% if message.tags == 'error' %}
-            <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
-            {% endif %}
-            {% if message.tags == 'success' %}
-            <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-          </div>
-          <!-- /.card-body -->
-        </div>
-        <div class="card-footer text-center">
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-      </form>
+      {% url 'save_subject' as action_path %}
+      {% include 'admin_template/form_subject_template.html' with messages=messages form=form action_path=action_path button_text="Add Subject" %}
+   
     </div>
   </div>
 </section>

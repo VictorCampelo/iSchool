@@ -33,6 +33,7 @@ urlpatterns = [
     path('add_teacher',admin.add_teacher,name="add_teacher"),
     path('add_school',admin.add_school,name="add_school"),
     path('add_class',admin.add_class,name="add_class"),
+    path('add_subject',admin.add_subject,name="add_subject"),
 
     path('save_admin',admin.save_admin,name="save_admin"),
     path('save_director',admin.save_director,name="save_director"),
@@ -40,7 +41,9 @@ urlpatterns = [
     path('save_student',admin.save_student,name="save_student"),
     path('save_school',admin.save_school,name="save_school"),
     path('save_class',admin.save_class,name="save_class"),
+    path('save_subject',admin.save_subject,name="save_subject"),
 
     path('class_list/', admin.load_class, name='ajax_load_class'),
+    path('teacher_list/', admin.load_teacher, name='ajax_load_teacher'),
 
 ]+static(settings.STATIC_URL, documents_root=settings.STATIC_ROOT)

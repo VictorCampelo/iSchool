@@ -45,17 +45,18 @@ class Teacher(models.Model):
     id = models.AutoField(primary_key=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     objects = models.Manager()
 
 class Subject(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
+    name =        models.CharField(max_length=255)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now_add=True)
     schoolclass = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
-    objects = models.Manager()
+    teacher =     models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    objects =     models.Manager()
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
@@ -79,7 +80,7 @@ def create_user_profile(sender,instance,created,**kwargs):
         if instance.user_type==2:
             Director.objects.create(admin=instance, school=School.objects.get(id=1))
         if instance.user_type==3:
-            Teacher.objects.create(admin=instance)
+            Teacher.objects.create(admin=instance, school=School.objects.get(id=1))
         if instance.user_type==4:
             Student.objects.create(admin=instance, 
             schoolclass=SchoolClass.objects.get(id=1),

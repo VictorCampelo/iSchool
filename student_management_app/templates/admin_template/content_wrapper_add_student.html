@@ -1,0 +1,18 @@
+{% load static %}
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Add Student</h3>
+      </div>
+      <!-- /.card-header -->
+      <!-- form start -->
+      {% url 'save_student' as action_path %}
+      {% include 'admin_template/form_student_template.html' with messages=messages form=form action_path=action_path button_text="Add Student" %}
+   
+  </div>
+</div>
+</section>
+

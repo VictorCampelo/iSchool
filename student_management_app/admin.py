@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.admin import UserAdmin
-from student_management_app.models import CustomUser, School, Director, Subject, SchoolClass
+from student_management_app.models import CustomUser, School, Director, Subject, SchoolClass, Root
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -16,6 +16,14 @@ def admin_home(request):
 
 def add_admin(request):
     return render(request, "admin_template/add_admin.html")
+
+def manage_admin(request):
+    admins = Root.objects.all()
+    return render(request,"admin_template/manage_admin.html",{"admins":admins})
+
+def edit_admin(request,admin_id):
+    admin=Root.objects.get(admin=admin_id)
+    return render(request,"admin_template/edit_admin.html",{"admin":admin,"id":admin_id})
 
 def add_director(request):
     form=AddDirectorForm()
@@ -72,6 +80,33 @@ def save_admin(request):
         except:
             messages.error(request,"Failed to Add Admin")
             return HttpResponseRedirect(reverse("add_admin"))
+
+def edit_admin_save(request):
+    if request.method!="POST":
+        return HttpResponse("<h2>Method Not Allowed</h2>")
+    else:
+        admin_id=request.POST.get("admin_id")
+        first_name=request.POST.get("first_name")
+        last_name=request.POST.get("last_name")
+        email=request.POST.get("email")
+        username=request.POST.get("username")
+
+        try:
+            user=CustomUser.objects.get(id=admin_id)
+            user.first_name=first_name
+            user.last_name=last_name
+            user.email=email
+            user.username=username
+            user.save()
+
+            # staff_model=Staffs.objects.get(admin=staff_id)
+            # staff_model.address=address
+            # staff_model.save()
+            messages.success(request,"Successfully Edited Admin")
+            return HttpResponseRedirect(reverse("edit_admin",kwargs={"admin_id":admin_id}))
+        except:
+            messages.error(request,"Failed to Edit Staff")
+            return HttpResponseRedirect(reverse("edit_admin",kwargs={"admin_id":admin_id}))
 
 def save_school(request):
     if request.method!="POST":

@@ -46,4 +46,9 @@ urlpatterns = [
     path('class_list/', admin.load_class, name='ajax_load_class'),
     path('teacher_list/', admin.load_teacher, name='ajax_load_teacher'),
 
+    path('manage_admin',admin.manage_admin,name="manage_admin"),
+
+    path('edit_admin/<str:admin_id>',admin.edit_admin,name="edit_admin"),
+    path('edit_admin_save', admin.edit_admin_save,name="edit_admin_save"),
+
 ]+static(settings.STATIC_URL, documents_root=settings.STATIC_ROOT)

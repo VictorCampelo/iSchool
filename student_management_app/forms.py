@@ -1,6 +1,6 @@
 from django import forms
 
-from student_management_app.models import School
+from student_management_app.models import School, SchoolClass, Teacher
 
 class DateInput(forms.DateInput):
     input_type = "date"
@@ -19,4 +19,115 @@ class AddDirectorForm(forms.Form):
         school_list.append(small_school)
 
     school=forms.ChoiceField(label="School",choices=school_list,widget=forms.Select(attrs={"class":"form-control"}))
+
+class AddClassForm(forms.Form):
+    school=School.objects.all()
+    school_list=[]
+    for schools in school:
+        small_school=(schools.id,schools.name)
+        school_list.append(small_school)
+    sr = [
+    (1, "1ª Série"), 
+    (2, "2ª Série"), 
+    (3, "3ª Série"), 
+    (4, "4ª Série"),
+    (5, "5ª Série"), 
+    (6, "6ª Série"), 
+    (7, "7ª Série"), 
+    (8, "8ª Série"),  
+    (9, "1º Ano "),
+    (10, "2º Ano"),
+    (11, "3º Ano")]
+    sb=[
+        (1, "A"),
+        (2, "B"),
+        (3, "C"), 
+        (4, "D"),
+        (5, "E")]
+    tr=[(1, 'Manhã'), (2, 'Tarde'), (3, "Noite")]
+    school=forms.ChoiceField(label="School",choices=school_list,widget=forms.Select(attrs={"class":"form-control"}))
+    serie=forms.ChoiceField(label="Serie",choices=sr,widget=forms.Select(attrs={"class":"form-control"}))
+    shift=forms.ChoiceField(label="Shift",choices=tr,widget=forms.Select(attrs={"class":"form-control"}))
+    subclass=forms.ChoiceField(label="Subclass",choices=sb,widget=forms.Select(attrs={"class":"form-control"}))
     
+class AddSchoolForm(forms.Form):
+    name=forms.CharField(label="Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    level=forms.ChoiceField(label="Level",choices=[(1, 'Médio'), (2, 'Fundamental')],widget=forms.Select(attrs={"class":"form-control"}))
+
+class SchoolForm(forms.Form):
+    
+    email=forms.EmailField(label="Email",max_length=50,widget=forms.EmailInput(attrs={"class":"form-control"}))
+    password=forms.CharField(label="Password",max_length=50,widget=forms.PasswordInput(attrs={"class":"form-control"}))
+    first_name=forms.CharField(label="First Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    last_name=forms.CharField(label="Last Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    username=forms.CharField(label="Username",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    
+    school=School.objects.all()
+    school_list=[]
+    for schools in school:
+        small_school=(schools.id,schools.name)
+        school_list.append(small_school)
+
+    school=forms.ChoiceField(label="School",choices=school_list,widget=forms.Select(attrs={"class":"form-control"}))
+    
+    classes = forms.ChoiceField(
+        label="Class",
+        choices=SchoolClass.objects.none(),
+        widget=forms.Select(attrs={"class":"form-control"})
+    )
+
+    class Meta:
+        fields = ('school', 'classes')
+
+    def __init__(self, school=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sclass_list=[]
+        if school:
+            sclass=SchoolClass.objects.filter(school=school)
+            for sclasses in sclass:
+                small_school=(sclasses.id,sclasses.name)
+                sclass_list.append(small_school)
+        self.fields['classes'].choices = sclass_list
+
+class AddSubjectForm(forms.Form):
+    name=forms.CharField(label="Name",max_length=50,widget=forms.TextInput(attrs={"class":"form-control"}))
+    
+    school=School.objects.all()
+    school_list=[]
+    for schools in school:
+        small_school=(schools.id,schools.name)
+        school_list.append(small_school)
+
+    school=forms.ChoiceField(label="School",choices=school_list,widget=forms.Select(attrs={"class":"form-control"}))
+    
+    classes = forms.ChoiceField(
+        label="Class",
+        choices=SchoolClass.objects.none(),
+        widget=forms.Select(attrs={"class":"form-control"})
+    )
+
+    teachers = forms.ChoiceField(
+        label="Teacher",
+        choices=Teacher.objects.none(),
+        widget=forms.Select(attrs={"class":"form-control"})
+    )
+
+    class Meta:
+        fields = ('school', 'classes', 'teachers')
+
+    def __init__(self, school=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        sclass_list=[]
+        steacher_list=[]
+        if school:
+            sclass=SchoolClass.objects.filter(school=school)
+            for sclasses in sclass:
+                small_school=(sclasses.id,sclasses.name)
+                sclass_list.append(small_school)
+            
+            steacher = Teacher.objects.filter(school=school)
+            for teacher in steacher:
+                small_teacher=(teacher.id,teacher.name)
+                steacher_list.append(small_teacher)
+        self.fields['classes'].choices = sclass_list
+        self.fields['teachers'].choices = steacher_list
